@@ -1,4 +1,4 @@
-# Spark for Java: Summary
+# Spark for Java: main concepts
 
 ## 1. Introduction
 
