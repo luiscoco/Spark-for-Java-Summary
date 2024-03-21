@@ -72,6 +72,8 @@ Let's delve into some more advanced features of Apache Spark for Java:
 
 **Spark SQL**: Spark SQL is a module for working with structured data. It allows you to execute SQL queries as well as manipulate data using DataFrame API, which provides a more user-friendly interface than RDDs
 
+SPARK SQL SAMPLE1:
+
 ```java
 // Creating a DataFrame from an RDD of JSON strings
 JavaRDD<String> jsonStrings = ...
@@ -83,6 +85,8 @@ df.createOrReplaceTempView("people");
 // Executing SQL query on the DataFrame
 DataFrame result = sqlContext.sql("SELECT * FROM people WHERE age >= 18");
 ```
+
+SPARK SQL SAMPLE2:
 
 ```java
 // Creating a DataFrame from a CSV file
