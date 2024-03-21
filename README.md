@@ -6,7 +6,7 @@
 
 It's designed to handle large-scale data processing tasks efficiently
 
-Here are some of the main **features of Spark** along with samples in Java:
+Here are some of the general/main **features of Spark** along with samples in Java:
 
 **Speed**: Spark's main feature is its speed. It can run workloads up to 100 times faster than traditional MapReduce jobs due to its in-memory processing capability
 
@@ -66,7 +66,7 @@ These are just a few of the main features of Spark demonstrated with sample Java
 
 Spark's versatility and performance make it a popular choice for big data processing tasks
 
-## 2. More advance features
+## 2. Java Samples for Spark High-level APIs 
 
 Let's delve into some more advanced features of Apache Spark for Java:
 
@@ -244,5 +244,117 @@ These are just a few of the advanced features and APIs available in Apache Spark
 
 Spark provides a wide range of tools and libraries for various use cases, making it a powerful framework for big data processing, machine learning, and stream processing
 
+## 3. More advance samples
 
+Custom Aggregation in Spark SQL:
+java
+Copy code
+// Registering a UDAF (User Defined Aggregate Function) for calculating median
+sqlContext.udf().register("median", new UserDefinedAggregateFunction() {
+    @Override
+    public StructType inputSchema() {
+        return new StructType().add("value", DataTypes.DoubleType);
+    }
+
+    @Override
+    public StructType bufferSchema() {
+        return new StructType().add("values", DataTypes.createArrayType(DataTypes.DoubleType));
+    }
+
+    @Override
+    public DataType dataType() {
+        return DataTypes.DoubleType;
+    }
+
+    @Override
+    public boolean deterministic() {
+        return true;
+    }
+
+    @Override
+    public void initialize(MutableAggregationBuffer buffer) {
+        buffer.update(0, new ArrayList<Double>());
+    }
+
+    @Override
+    public void update(MutableAggregationBuffer buffer, Row input) {
+        double value = input.getDouble(0);
+        ArrayList<Double> values = new ArrayList<>(buffer.getList(0));
+        values.add(value);
+        buffer.update(0, values);
+    }
+
+    @Override
+    public void merge(MutableAggregationBuffer buffer1, Row buffer2) {
+        ArrayList<Double> values1 = new ArrayList<>(buffer1.getList(0));
+        ArrayList<Double> values2 = new ArrayList<>(buffer2.getList(0));
+        values1.addAll(values2);
+        buffer1.update(0, values1);
+    }
+
+    @Override
+    public Double evaluate(Row buffer) {
+        ArrayList<Double> values = new ArrayList<>(buffer.getList(0));
+        Collections.sort(values);
+        int size = values.size();
+        if (size % 2 == 0) {
+            return (values.get(size / 2) + values.get(size / 2 - 1)) / 2;
+        } else {
+            return values.get(size / 2);
+        }
+    }
+});
+
+// Using the UDAF to calculate median
+DataFrame df = sqlContext.read().format("csv").option("header", "true").load("path/to/csv/file.csv");
+df.createOrReplaceTempView("data");
+DataFrame result = sqlContext.sql("SELECT median(value) FROM data");
+result.show();
+Handling Stateful Operations in Spark Streaming:
+java
+Copy code
+// Stateful word count using updateStateByKey
+JavaPairDStream<String, Integer> wordCounts = lines.flatMapToPair(line -> Arrays.asList(line.split(" ")).stream()
+        .map(word -> new Tuple2<>(word, 1)).iterator())
+        .updateStateByKey((values, state) -> {
+            int sum = state.orElse(0);
+            for (Integer value : values) {
+                sum += value;
+            }
+            return Optional.of(sum);
+        });
+
+wordCounts.print();
+Feature Engineering and Pipeline in MLlib:
+java
+Copy code
+// Feature Engineering and Pipeline
+// Load data
+Dataset<Row> data = spark.read().format("libsvm").load("data/mllib/sample_libsvm_data.txt");
+
+// Split data into training and testing sets
+Dataset<Row>[] splits = data.randomSplit(new double[]{0.7, 0.3});
+Dataset<Row> trainingData = splits[0];
+Dataset<Row> testData = splits[1];
+
+// Configure an ML pipeline, which consists of three stages: tokenizer, hashingTF, and logistic regression
+Tokenizer tokenizer = new Tokenizer().setInputCol("text").setOutputCol("words");
+HashingTF hashingTF = new HashingTF().setNumFeatures(1000).setInputCol(tokenizer.getOutputCol()).setOutputCol("features");
+LogisticRegression lr = new LogisticRegression().setMaxIter(10).setRegParam(0.01);
+Pipeline pipeline = new Pipeline().setStages(new PipelineStage[]{tokenizer, hashingTF, lr});
+
+// Fit the pipeline to training data
+PipelineModel model = pipeline.fit(trainingData);
+
+// Make predictions on test data
+Dataset<Row> predictions = model.transform(testData);
+
+// Evaluate the predictions
+MulticlassClassificationEvaluator evaluator = new MulticlassClassificationEvaluator()
+        .setLabelCol("label")
+        .setPredictionCol("prediction")
+        .setMetricName("accuracy");
+double accuracy = evaluator.evaluate(predictions);
+System.out.println("Test set accuracy = " + accuracy);
+These examples demonstrate more complex and advanced scenarios in Apache Spark for Java, including custom aggregation functions in Spark SQL, stateful operations in Spark Streaming, and feature engineering with MLlib. They showcase the flexibility and power of Apache Spark for handling diverse data processing tasks in a distributed environment.
 
