@@ -101,6 +101,8 @@ DataFrame result = sqlContext.sql("SELECT * FROM sales WHERE product='Apple'");
 
 **DataFrame API**: DataFrame API provides a more optimized way to work with structured data compared to RDDs. It's available in Java and allows for easier data manipulation and processing
 
+SPARK DATAFRAME API SAMPLE1:
+
 ```java
 // Creating DataFrame from a list of JavaBeans
 List<Person> peopleList = Arrays.asList(
@@ -113,6 +115,8 @@ DataFrame df = sqlContext.createDataFrame(peopleRDD, Person.class);
 // Filtering DataFrame using DataFrame API
 DataFrame filteredDF = df.filter(df.col("age").geq(18));
 ```
+
+SPARK DATAFRAME API SAMPLE2:
 
 ```java
 // Creating DataFrame from a list of tuples
@@ -133,6 +137,8 @@ DataFrame filteredDF = df.filter(df.col("age").geq(18));
 
 **Dataset API**: Dataset API combines the benefits of RDDs and DataFrame API by providing type safety and high-level abstractions. It's available in Scala and Java
 
+SPARK DATASET API SAMPLE1:
+
 ```java
 // Creating a Dataset from a list of JavaBeans
 List<Person> peopleList = Arrays.asList(
@@ -144,6 +150,8 @@ Dataset<Person> peopleDS = spark.createDataset(peopleList, Encoders.bean(Person.
 // Filtering Dataset using Dataset API
 Dataset<Person> filteredDS = peopleDS.filter(person -> person.getAge() >= 18);
 ```
+
+SPARK DATASET API SAMPLE2:
 
 ```java
 // Creating a Dataset from a list of tuples
@@ -159,6 +167,8 @@ Dataset<Row> filteredDS = df.filter(col("age").geq(18));
 
 **Spark Streaming**: Spark Streaming is an extension of the core Spark API that enables scalable, high-throughput, fault-tolerant stream processing of live data streams
 
+SPARK STREAMING SAMPLE1:
+
 ```java
 // Creating a Spark Streaming context
 JavaStreamingContext streamingContext = new JavaStreamingContext(sparkConf, Durations.seconds(1));
@@ -172,6 +182,8 @@ JavaInputDStream<ConsumerRecord<String, String>> kafkaStream = KafkaUtils.create
     ConsumerStrategies.Subscribe(Arrays.asList("topic"), kafkaParams)
 );
 ```
+
+SPARK STREAMING SAMPLE2:
 
 ```java
 // Creating a Spark Streaming context
@@ -190,6 +202,8 @@ wordCounts.print();
 
 **MLlib**: MLlib is Spark's scalable machine learning library. It provides various machine learning algorithms and utilities for data preprocessing, feature engineering, model evaluation, etc
 
+SPARK MLIB SAMPLE1:
+
 ```java
 // Loading data for training
 Dataset<Row> data = spark.read().format("libsvm").load("data/mllib/sample_libsvm_data.txt");
@@ -206,6 +220,8 @@ RandomForestClassifier rf = new RandomForestClassifier()
     .setNumTrees(10);
 RandomForestClassificationModel model = rf.fit(trainingData);
 ```
+
+SPARK MLIB SAMPLE2:
 
 ```java
 // Loading data for training
