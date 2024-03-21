@@ -246,9 +246,9 @@ Spark provides a wide range of tools and libraries for various use cases, making
 
 ## 3. More advance samples
 
-Custom Aggregation in Spark SQL:
-java
-Copy code
+**Custom Aggregation in Spark SQL**:
+
+```java
 // Registering a UDAF (User Defined Aggregate Function) for calculating median
 sqlContext.udf().register("median", new UserDefinedAggregateFunction() {
     @Override
@@ -310,9 +310,11 @@ DataFrame df = sqlContext.read().format("csv").option("header", "true").load("pa
 df.createOrReplaceTempView("data");
 DataFrame result = sqlContext.sql("SELECT median(value) FROM data");
 result.show();
-Handling Stateful Operations in Spark Streaming:
-java
-Copy code
+```
+
+**Handling Stateful Operations in Spark Streaming**:
+
+```java
 // Stateful word count using updateStateByKey
 JavaPairDStream<String, Integer> wordCounts = lines.flatMapToPair(line -> Arrays.asList(line.split(" ")).stream()
         .map(word -> new Tuple2<>(word, 1)).iterator())
@@ -325,9 +327,11 @@ JavaPairDStream<String, Integer> wordCounts = lines.flatMapToPair(line -> Arrays
         });
 
 wordCounts.print();
-Feature Engineering and Pipeline in MLlib:
-java
-Copy code
+```
+
+**Feature Engineering and Pipeline in MLlib**:
+
+```java
 // Feature Engineering and Pipeline
 // Load data
 Dataset<Row> data = spark.read().format("libsvm").load("data/mllib/sample_libsvm_data.txt");
@@ -356,5 +360,9 @@ MulticlassClassificationEvaluator evaluator = new MulticlassClassificationEvalua
         .setMetricName("accuracy");
 double accuracy = evaluator.evaluate(predictions);
 System.out.println("Test set accuracy = " + accuracy);
-These examples demonstrate more complex and advanced scenarios in Apache Spark for Java, including custom aggregation functions in Spark SQL, stateful operations in Spark Streaming, and feature engineering with MLlib. They showcase the flexibility and power of Apache Spark for handling diverse data processing tasks in a distributed environment.
+```
+
+These examples demonstrate more complex and advanced scenarios in Apache Spark for Java, including custom aggregation functions in Spark SQL, stateful operations in Spark Streaming, and feature engineering with MLlib
+
+They showcase the flexibility and power of Apache Spark for handling diverse data processing tasks in a distributed environment.
 
