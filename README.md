@@ -84,6 +84,17 @@ df.createOrReplaceTempView("people");
 DataFrame result = sqlContext.sql("SELECT * FROM people WHERE age >= 18");
 ```
 
+```java
+// Creating a DataFrame from a CSV file
+DataFrame df = sqlContext.read().format("csv").option("header", "true").load("path/to/csv/file.csv");
+
+// Registering DataFrame as a temporary table
+df.createOrReplaceTempView("sales");
+
+// Executing SQL query on the DataFrame
+DataFrame result = sqlContext.sql("SELECT * FROM sales WHERE product='Apple'");
+```
+
 **DataFrame API**: DataFrame API provides a more optimized way to work with structured data compared to RDDs. It's available in Java and allows for easier data manipulation and processing
 
 ```java
@@ -94,6 +105,23 @@ List<Person> peopleList = Arrays.asList(
 );
 JavaRDD<Person> peopleRDD = sc.parallelize(peopleList);
 DataFrame df = sqlContext.createDataFrame(peopleRDD, Person.class);
+
+// Filtering DataFrame using DataFrame API
+DataFrame filteredDF = df.filter(df.col("age").geq(18));
+```
+
+```java
+// Creating DataFrame from a list of tuples
+List<Tuple2<String, Integer>> data = Arrays.asList(
+    new Tuple2<>("Alice", 25),
+    new Tuple2<>("Bob", 30)
+);
+JavaRDD<Row> rowRDD = sc.parallelize(data).map(tuple -> RowFactory.create(tuple._1(), tuple._2()));
+StructType schema = DataTypes.createStructType(Arrays.asList(
+    DataTypes.createStructField("name", DataTypes.StringType, false),
+    DataTypes.createStructField("age", DataTypes.IntegerType, false)
+));
+DataFrame df = sqlContext.createDataFrame(rowRDD, schema);
 
 // Filtering DataFrame using DataFrame API
 DataFrame filteredDF = df.filter(df.col("age").geq(18));
@@ -113,6 +141,18 @@ Dataset<Person> peopleDS = spark.createDataset(peopleList, Encoders.bean(Person.
 Dataset<Person> filteredDS = peopleDS.filter(person -> person.getAge() >= 18);
 ```
 
+```java
+// Creating a Dataset from a list of tuples
+List<Tuple2<String, Integer>> data = Arrays.asList(
+    new Tuple2<>("Alice", 25),
+    new Tuple2<>("Bob", 30)
+);
+Dataset<Row> df = spark.createDataset(data, Encoders.tuple(Encoders.STRING(), Encoders.INT())).toDF("name", "age");
+
+// Filtering Dataset using Dataset API
+Dataset<Row> filteredDS = df.filter(col("age").geq(18));
+```
+
 **Spark Streaming**: Spark Streaming is an extension of the core Spark API that enables scalable, high-throughput, fault-tolerant stream processing of live data streams
 
 ```java
@@ -129,7 +169,39 @@ JavaInputDStream<ConsumerRecord<String, String>> kafkaStream = KafkaUtils.create
 );
 ```
 
+```java
+// Creating a Spark Streaming context
+JavaStreamingContext streamingContext = new JavaStreamingContext(sparkConf, Durations.seconds(1));
+
+// Creating a DStream from a TCP socket
+JavaReceiverInputDStream<String> lines = streamingContext.socketTextStream("localhost", 9999);
+
+// Counting words in each batch of data
+JavaDStream<String> words = lines.flatMap(line -> Arrays.asList(line.split(" ")).iterator());
+JavaPairDStream<String, Integer> wordCounts = words.mapToPair(word -> new Tuple2<>(word, 1)).reduceByKey(Integer::sum);
+
+// Printing the word counts
+wordCounts.print();
+```
+
 **MLlib**: MLlib is Spark's scalable machine learning library. It provides various machine learning algorithms and utilities for data preprocessing, feature engineering, model evaluation, etc
+
+```java
+// Loading data for training
+Dataset<Row> data = spark.read().format("libsvm").load("data/mllib/sample_libsvm_data.txt");
+
+// Splitting the data into training and testing sets
+Dataset<Row>[] splits = data.randomSplit(new double[]{0.7, 0.3});
+Dataset<Row> trainingData = splits[0];
+Dataset<Row> testData = splits[1];
+
+// Training a RandomForestClassifier model
+RandomForestClassifier rf = new RandomForestClassifier()
+    .setLabelCol("label")
+    .setFeaturesCol("features")
+    .setNumTrees(10);
+RandomForestClassificationModel model = rf.fit(trainingData);
+```
 
 ```java
 // Loading data for training
