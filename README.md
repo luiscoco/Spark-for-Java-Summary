@@ -20,16 +20,15 @@ wordCounts.saveAsTextFile("hdfs://...");
 
 **Ease of Use**: Spark provides easy-to-use APIs for Java, Scala, Python, and R, making it accessible to a wide range of developers
 
-java
-Copy code
+```java
 // Sample Java Spark code to filter even numbers from an RDD
 JavaRDD<Integer> numbers = sc.parallelize(Arrays.asList(1, 2, 3, 4, 5));
 JavaRDD<Integer> evenNumbers = numbers.filter(num -> num % 2 == 0);
+```
 
 **Generality**: Spark supports various workloads like batch processing, interactive queries, streaming analytics, and machine learning
 
 ```java
-Copy code
 // Sample Java Spark code to perform simple machine learning using MLlib
 JavaRDD<LabeledPoint> data = ... // Load labeled data.
 LinearRegressionModel model = new LinearRegressionWithSGD().train(data.rdd());
@@ -38,7 +37,6 @@ LinearRegressionModel model = new LinearRegressionWithSGD().train(data.rdd());
 **Fault Tolerance**: Spark provides fault tolerance through lineage information, allowing it to recompute lost data using the information about how it was derived
 
 ```java
-Copy code
 // Sample Java Spark code showing fault tolerance by recomputing lost data
 JavaRDD<String> textFile = sc.textFile("hdfs://...");
 JavaRDD<String> errors = textFile.filter(line -> line.contains("error"));
@@ -49,7 +47,6 @@ long numErrors = errors.count(); // Compute count
 **Lazy Evaluation**: Spark uses lazy evaluation, which means transformations on RDDs are not executed until an action is called. This optimizes the execution plan
 
 ```java
-Copy code
 // Sample Java Spark code showing lazy evaluation
 JavaRDD<String> lines = sc.textFile("hdfs://...");
 JavaRDD<String> words = lines.flatMap(line -> Arrays.asList(line.split(" ")).iterator());
@@ -60,7 +57,6 @@ long numWords = words.count(); // Compute count
 **In-Memory Processing**: Spark keeps intermediate data in memory, which makes it faster than disk-based systems like Hadoop MapReduce
 
 ```java
-Copy code
 // Sample Java Spark code to cache an RDD in memory
 JavaRDD<String> textFile = sc.textFile("hdfs://...");
 textFile.persist(StorageLevel.MEMORY_ONLY()); // Cache RDD in memory
@@ -77,7 +73,6 @@ Let's delve into some more advanced features of Apache Spark for Java:
 **Spark SQL**: Spark SQL is a module for working with structured data. It allows you to execute SQL queries as well as manipulate data using DataFrame API, which provides a more user-friendly interface than RDDs
 
 ```java
-Copy code
 // Creating a DataFrame from an RDD of JSON strings
 JavaRDD<String> jsonStrings = ...
 DataFrame df = sqlContext.read().json(jsonStrings);
@@ -92,7 +87,6 @@ DataFrame result = sqlContext.sql("SELECT * FROM people WHERE age >= 18");
 **DataFrame API**: DataFrame API provides a more optimized way to work with structured data compared to RDDs. It's available in Java and allows for easier data manipulation and processing
 
 ```java
-Copy code
 // Creating DataFrame from a list of JavaBeans
 List<Person> peopleList = Arrays.asList(
     new Person("Alice", 25),
@@ -108,7 +102,6 @@ DataFrame filteredDF = df.filter(df.col("age").geq(18));
 **Dataset API**: Dataset API combines the benefits of RDDs and DataFrame API by providing type safety and high-level abstractions. It's available in Scala and Java
 
 ```java
-Copy code
 // Creating a Dataset from a list of JavaBeans
 List<Person> peopleList = Arrays.asList(
     new Person("Alice", 25),
@@ -123,7 +116,6 @@ Dataset<Person> filteredDS = peopleDS.filter(person -> person.getAge() >= 18);
 **Spark Streaming**: Spark Streaming is an extension of the core Spark API that enables scalable, high-throughput, fault-tolerant stream processing of live data streams
 
 ```java
-Copy code
 // Creating a Spark Streaming context
 JavaStreamingContext streamingContext = new JavaStreamingContext(sparkConf, Durations.seconds(1));
 
@@ -140,7 +132,6 @@ JavaInputDStream<ConsumerRecord<String, String>> kafkaStream = KafkaUtils.create
 **MLlib**: MLlib is Spark's scalable machine learning library. It provides various machine learning algorithms and utilities for data preprocessing, feature engineering, model evaluation, etc
 
 ```java
-Copy code
 // Loading data for training
 Dataset<Row> data = spark.read().format("libsvm").load("data/mllib/sample_libsvm_data.txt");
 
