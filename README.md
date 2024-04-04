@@ -1,5 +1,7 @@
 # Spark for Java: Summary
 
+See this Udemy course: https://www.udemy.com/course/apache-spark-for-java-developers
+
 ## 1. Introduction
 
 **Apache Spark** is a powerful **open-source distributed computing system** that provides an interface for programming entire clusters with implicit data parallelism and fault tolerance
